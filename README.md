@@ -123,9 +123,9 @@ Weather_Data-Analysis-and-Prediction/
 
 ---
 
-## 📸 Screenshots
+## 📸 Screenshots or Demo will be at my linkdin post
 
-> _Coming soon — run the app and see for yourself!_
+> _Coming soon_
 
 ---
 
