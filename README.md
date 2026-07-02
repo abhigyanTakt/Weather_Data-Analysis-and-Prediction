@@ -8,7 +8,6 @@
 
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.x-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
 </div>
 
@@ -97,51 +96,6 @@ Runs multiple models in parallel for any chosen weather variable:
 
 ---
 
-## 🚀 Getting Started
-
-### 1. Clone the repository
-```bash
-git clone https://github.com/abhigyanTakt/Weather_Data-Analysis-and-Prediction.git
-cd Weather_Data-Analysis-and-Prediction
-```
-
-### 2. Create a virtual environment
-```bash
-python -m venv venv
-# Windows
-venv\Scripts\activate
-# macOS / Linux
-source venv/bin/activate
-```
-
-### 3. Install dependencies
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Set up your API key
-```bash
-# Copy the example env file
-cp .env.example .env
-# Open .env and add your NVIDIA API key
-# Get one free at https://integrate.api.nvidia.com
-```
-
-Your `.env` file:
-```
-NVIDIA_API_KEY=your_nvidia_api_key_here
-```
-
-> 🔒 The `.env` file is in `.gitignore` and will **never** be committed.
-
-### 5. Run the dashboard
-```bash
-cd climatrend
-streamlit run app.py
-```
-
-The app opens at `http://localhost:8501` 🎉
-
 ---
 
 ## 📁 Project Structure
@@ -216,7 +170,7 @@ Pull requests are welcome! For major changes, please open an issue first to disc
 
 ## 📜 License
 
-Distributed under the **MIT License**. See `LICENSE` for more information.
+This project was built and is maintained by **Abhigyan**. Feel free to use it for learning and personal projects. Give credit if you build on top of it! 🙌
 
 ---
 
