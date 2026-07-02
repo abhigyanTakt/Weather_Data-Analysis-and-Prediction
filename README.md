@@ -125,7 +125,7 @@ Weather_Data-Analysis-and-Prediction/
 
 ## 📸 Screenshots or Demo will be at my linkdin post
 
-> _Coming soon_
+>[Linkdin Post](https://www.linkedin.com/posts/abhigyan-dubey-5468bb320_nvidia-nature-cliamte-ugcPost-7478460692430344192-uwvy/?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAFFKqEYBM1fLYZDqeaJ95_wm3093I2LlkvM)
 
 ---
 
