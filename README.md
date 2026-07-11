@@ -188,3 +188,8 @@ This project was built and is maintained by **Abhigyan**. Feel free to use it fo
 <div align="center">
 Made with ❤️ by <a href="https://github.com/abhigyanTakt">Abhigyan</a>
 </div>
+
+
+
+## Log
+ - 07/11/2026 Changed the models
