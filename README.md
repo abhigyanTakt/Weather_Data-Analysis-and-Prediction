@@ -125,7 +125,27 @@ Weather_Data-Analysis-and-Prediction/
 
 ## 📸 Screenshots
 
-> _Coming soon — run the app and see for yourself!_
+### 🌡️ Real-Time Current Weather Conditions
+![Current Weather — London](screenshots/screenshot_current_weather.png)
+> Live temperature, humidity, wind speed, pressure & the interactive 3D animated weather model (daytime sun shown above London at 25.9°C).
+
+---
+
+### 🌐 Interactive 3D Weather State Space
+![3D Weather State Space — Moscow](screenshots/screenshot_3d_statespace.png)
+> A fully interactive 3D scatter plot visualizing temperature, humidity, wind speed & precipitation together — powered by Plotly.
+
+---
+
+### 🗺️ Interactive Maps — Temperature Overlay (日本語 UI)
+![Maps Temperature — Tokyo](screenshots/screenshot_maps_temperature.png)
+> Live Windy.com map centred on Tokyo with the **Temperature** overlay active, demonstrating the full multilingual Japanese interface.
+
+---
+
+### ☁️ Interactive Maps — Cloud Cover Overlay (日本語 UI)
+![Maps Clouds — Tokyo](screenshots/screenshot_maps_clouds.png)
+> Same map view switching to the **Clouds** overlay — showcasing switchable weather layers and the seamless language localisation.
 
 ---
 
