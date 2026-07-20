@@ -123,7 +123,7 @@ Weather_Data-Analysis-and-Prediction/
 
 ---
 
-## 📸 Screenshots
+## 📸 Screenshots or Demo will be at my linkdin post
 
 ### 🌡️ Real-Time Current Weather Conditions
 ![Current Weather — London](screenshots/screenshot_current_weather.png)
@@ -146,6 +146,7 @@ Weather_Data-Analysis-and-Prediction/
 ### ☁️ Interactive Maps — Cloud Cover Overlay (日本語 UI)
 ![Maps Clouds — Tokyo](screenshots/screenshot_maps_clouds.png)
 > Same map view switching to the **Clouds** overlay — showcasing switchable weather layers and the seamless language localisation.
+>[Linkdin Post](https://www.linkedin.com/posts/abhigyan-dubey-5468bb320_nvidia-nature-cliamte-ugcPost-7478460692430344192-uwvy/?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAFFKqEYBM1fLYZDqeaJ95_wm3093I2LlkvM)
 
 ---
 
@@ -208,3 +209,9 @@ This project was built and is maintained by **Abhigyan**. Feel free to use it fo
 <div align="center">
 Made with ❤️ by <a href="https://github.com/abhigyanTakt">Abhigyan</a>
 </div>
+
+
+
+## Log
+ - 07/11/2026 Changed the models
+ - A bit late but deepseek model api is in beta (idk i just working on it)
