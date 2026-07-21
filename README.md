@@ -139,7 +139,8 @@ Weather_Data-Analysis-and-Prediction/
 ---
 
 ### 🗺️ Interactive Maps — Temperature Overlay (日本語 UI)
-![Maps Temperature](<img width="1919" height="883" alt="Screenshot 2026-07-02 200420" src="https://github.com/user-attachments/assets/0d8c09c3-f715-4754-bad5-d6ce1a02fe5c" />
+![Maps Temperature]<img width="1919" height="883" alt="image" src="https://github.com/user-attachments/assets/c89048da-62e4-4e61-936c-24c9c52120f8" />
+
 )
 > Live Windy.com map centred on Tokyo with the **Temperature** overlay active, demonstrating the full multilingual Japanese interface.
 
