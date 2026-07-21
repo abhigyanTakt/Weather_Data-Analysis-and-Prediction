@@ -126,25 +126,28 @@ Weather_Data-Analysis-and-Prediction/
 ## 📸 Screenshots or Demo will be at my linkdin post
 
 ### 🌡️ Real-Time Current Weather Conditions
-![Current Weather — London](screenshots/screenshot_current_weather.png)
+![Current Weather](screenshots/screenshot_current_weather.png)
 > Live temperature, humidity, wind speed, pressure & the interactive 3D animated weather model (daytime sun shown above London at 25.9°C).
 
 ---
 
 ### 🌐 Interactive 3D Weather State Space
-![3D Weather State Space — Moscow](screenshots/screenshot_3d_statespace.png)
+![3D Weather State Space](<img width="1896" height="875" alt="Screenshot 2026-07-02 185721" src="https://github.com/user-attachments/assets/7b02989b-ce1f-4e78-9786-5f4394eea706" />
+)
 > A fully interactive 3D scatter plot visualizing temperature, humidity, wind speed & precipitation together — powered by Plotly.
 
 ---
 
 ### 🗺️ Interactive Maps — Temperature Overlay (日本語 UI)
-![Maps Temperature — Tokyo](screenshots/screenshot_maps_temperature.png)
+![Maps Temperature](<img width="1919" height="883" alt="Screenshot 2026-07-02 200420" src="https://github.com/user-attachments/assets/0d8c09c3-f715-4754-bad5-d6ce1a02fe5c" />
+)
 > Live Windy.com map centred on Tokyo with the **Temperature** overlay active, demonstrating the full multilingual Japanese interface.
 
 ---
 
 ### ☁️ Interactive Maps — Cloud Cover Overlay (日本語 UI)
-![Maps Clouds — Tokyo](screenshots/screenshot_maps_clouds.png)
+![Maps Clouds — Tokyo](<img width="1913" height="835" alt="Screenshot 2026-07-02 200436" src="https://github.com/user-attachments/assets/17f6ebe9-2c68-4acc-8bca-3c0fd733469d" />
+)
 > Same map view switching to the **Clouds** overlay — showcasing switchable weather layers and the seamless language localisation.
 >[Linkdin Post](https://www.linkedin.com/posts/abhigyan-dubey-5468bb320_nvidia-nature-cliamte-ugcPost-7478460692430344192-uwvy/?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAFFKqEYBM1fLYZDqeaJ95_wm3093I2LlkvM)
 
