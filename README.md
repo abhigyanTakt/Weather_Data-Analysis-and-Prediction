@@ -213,6 +213,9 @@ Made with ❤️ by <a href="https://github.com/abhigyanTakt">Abhigyan</a>
 </div>
 
 
+### Log file:
+- Aug 6,2026 added option like dark mode and light mode
+
 
 ## Log
  - 07/11/2026 Changed the models
