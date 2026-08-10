@@ -221,3 +221,4 @@ Made with ❤️ by <a href="https://github.com/abhigyanTakt">Abhigyan</a>
  - 07/11/2026 Changed the models
  - A bit late but deepseek model api is in beta (idk i just working on it)
  - 02/08/2026 fix bugs and graphs issues 
+ - 10/08/2026 changes graphs outlines
