@@ -213,12 +213,9 @@ Made with ❤️ by <a href="https://github.com/abhigyanTakt">Abhigyan</a>
 </div>
 
 
-### Log file:
-- Aug 6,2026 added option like dark mode and light mode
-
-
-## Log
+### Log
  - 07/11/2026 Changed the models
  - A bit late but deepseek model api is in beta (idk i just working on it)
- - 02/08/2026 fix bugs and graphs issues 
+ - 02/08/2026 fix bugs and graphs issues
+ - Aug 6,2026 added option like dark mode and light mode
  - 10/08/2026 changes graphs outlines
