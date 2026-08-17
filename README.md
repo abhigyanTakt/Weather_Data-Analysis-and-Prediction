@@ -219,3 +219,4 @@ Made with ❤️ by <a href="https://github.com/abhigyanTakt">Abhigyan</a>
  - 02/08/2026 fix bugs and graphs issues
  - Aug 6,2026 added option like dark mode and light mode
  - 10/08/2026 changes graphs outlines
+ - upcoming featurs -> in ui/ux , deployment etc
