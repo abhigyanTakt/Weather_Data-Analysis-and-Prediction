@@ -24,8 +24,9 @@ logger = logging.getLogger(__name__)
 
 # API configuration — set NVIDIA_API_KEY in your .env file or environment
 API_KEY = os.getenv("NVIDIA_API_KEY", "")
-BASE_URL = "https://integrate.api.nvidia.com/v1"
-MODEL_NAME = "deepseek-ai/deepseek-v4-pro"
+BASE_URL = os.getenv("NVIDIA_BASE_URL", "https://integrate.api.nvidia.com/v1")
+MODEL_NAME = os.getenv("NVIDIA_MODEL_NAME", "deepseek-ai/deepseek-v4.1-flash")
+TIMEOUT = float(os.getenv("NVIDIA_TIMEOUT", "20.0"))
 
 # WMO Weather Code Mapping to descriptions
 WMO_CODE_MAP = {
@@ -104,6 +105,23 @@ def get_ai_insight(
     forecast_end = forecast_results["forecast"].iloc[-1] if not forecast_results.empty else "N/A"
     forecast_days = len(forecast_results)
 
+    # Robust formatting for numbers or strings
+    hist_mean_temp_str = f"{hist_mean_temp:.2f}" if isinstance(hist_mean_temp, (int, float)) else str(hist_mean_temp)
+    hist_max_temp_str = f"{hist_max_temp:.2f}" if isinstance(hist_max_temp, (int, float)) else str(hist_max_temp)
+    hist_min_temp_str = f"{hist_min_temp:.2f}" if isinstance(hist_min_temp, (int, float)) else str(hist_min_temp)
+    hist_total_precip_str = f"{hist_total_precip:.1f}" if isinstance(hist_total_precip, (int, float)) else str(hist_total_precip)
+    forecast_start_str = f"{forecast_start:.2f}" if isinstance(forecast_start, (int, float)) else str(forecast_start)
+    forecast_end_str = f"{forecast_end:.2f}" if isinstance(forecast_end, (int, float)) else str(forecast_end)
+
+    if isinstance(forecast_start, (int, float)) and isinstance(forecast_end, (int, float)):
+        trend_direction = "Warm-up" if (forecast_end > forecast_start) else "Cool-down" if (forecast_end < forecast_start) else "Stable"
+        trend_adj = "warming" if (forecast_end > forecast_start) else "cooling" if (forecast_end < forecast_start) else "stable"
+        energy_demand = "increased cooling loads" if forecast_end > 25 else "heating requirements" if forecast_end < 15 else "moderate base energy demands"
+    else:
+        trend_direction = "Stable"
+        trend_adj = "stable"
+        energy_demand = "moderate base energy demands"
+
     # Compile metrics overview
     metrics_str = ""
     for model, met in model_metrics.items():
@@ -146,13 +164,13 @@ You are an expert climatologist and data scientist. Provide a professional, deta
 {realtime_str}
 
 ### Long-Term Historical Climate Summary (Descriptive Stats):
-- Average Mean Temperature: {hist_mean_temp}°C (Range: {hist_min_temp}°C to {hist_max_temp}°C)
-- Estimated Annual Precipitation: {hist_total_precip:.1f} mm (based on historical daily average)
+- Average Mean Temperature: {hist_mean_temp_str}°C (Range: {hist_min_temp_str}°C to {hist_max_temp_str}°C)
+- Estimated Annual Precipitation: {hist_total_precip_str} mm (based on historical daily average)
 
 ### Long-Term Temperature Forecast ({forecast_days}-day horizon):
-- Expected Temperature at start of forecast: {forecast_start:.2f}°C
-- Expected Temperature at end of forecast: {forecast_end:.2f}°C
-- Forecast trend direction: {"Warm-up" if (forecast_end > forecast_start) else "Cool-down" if (forecast_end < forecast_start) else "Stable"}
+- Expected Temperature at start of forecast: {forecast_start_str}°C
+- Expected Temperature at end of forecast: {forecast_end_str}°C
+- Forecast trend direction: {trend_direction}
 
 ### Long-Term Model Performance Metrics:
 {metrics_str}
@@ -178,24 +196,24 @@ Ensure the output is clean Markdown, readable, and scientific yet accessible. Do
 Current temperatures and short-term trends conform to normal local cycles. Rain and UV metrics are in expected bounds.
 
 ### 2. Climate Characteristics
-The weather data for **{location_name}** indicates a historical mean temperature of **{hist_mean_temp}°C**, with temperatures varying between **{hist_min_temp}°C** and **{hist_max_temp}°C**.
+The weather data for **{location_name}** indicates a historical mean temperature of **{hist_mean_temp_str}°C**, with temperatures varying between **{hist_min_temp_str}°C** and **{hist_max_temp_str}°C**.
 
 ### 3. Model Performance Summary
 Based on the validation metrics:
 {metrics_str}
 
 ### 4. Long-Term Forecast Trend
-Over the next **{forecast_days} days**, the temperature is predicted to move from **{forecast_start:.2f}°C** to **{forecast_end:.2f}°C**. This represents a general **{"warming" if (forecast_end > forecast_start) else "cooling" if (forecast_end < forecast_start) else "stable"} trend**.
+Over the next **{forecast_days} days**, the temperature is predicted to move from **{forecast_start_str}°C** to **{forecast_end_str}°C**. This represents a general **{trend_adj} trend**.
 
 ### 5. Environmental and Planning Implications
-- **Energy Demands**: Plan for {"increased cooling loads" if forecast_end > 25 else "heating requirements" if forecast_end < 15 else "moderate base energy demands"}.
+- **Energy Demands**: Plan for {energy_demand}.
 - **Agriculture & Water**: Regional planning should monitor water balances and soil moisture levels, especially given estimated annual rainfall rates.
 """
 
     if stream:
         def stream_generator():
             try:
-                client = OpenAI(base_url=BASE_URL, api_key=api_key)
+                client = OpenAI(base_url=BASE_URL, api_key=api_key, timeout=TIMEOUT)
                 completion = client.chat.completions.create(
                     model=MODEL_NAME,
                     messages=[{"role": "user", "content": prompt}],
@@ -217,7 +235,7 @@ Over the next **{forecast_days} days**, the temperature is predicted to move fro
         return stream_generator()
     else:
         try:
-            client = OpenAI(base_url=BASE_URL, api_key=api_key)
+            client = OpenAI(base_url=BASE_URL, api_key=api_key, timeout=TIMEOUT)
             completion = client.chat.completions.create(
                 model=MODEL_NAME,
                 messages=[{"role": "user", "content": prompt}],
