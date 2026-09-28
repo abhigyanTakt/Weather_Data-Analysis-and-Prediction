@@ -48,6 +48,7 @@ from climatrend.src.map_visualizations import (
 from climatrend.src.ai_insights import get_ai_insight, API_KEY
 from climatrend.src.forecasting_model import train_test_split_ts
 from climatrend.src.translations import TRANSLATIONS
+from climatrend.src.weather_effects import apply_weather_effects, get_weather_theme
 
 # Configure logger
 logging.basicConfig(level=logging.INFO)
@@ -398,8 +399,9 @@ def load_global_map_data():
     Cached to avoid API hits on every interaction.
     """
     logger.info("Loading global city weather data for mapping...")
-    start_date = (datetime.date.today() - datetime.timedelta(days=365)).strftime("%Y-%m-%d")
-    end_date = datetime.date.today().strftime("%Y-%m-%d")
+    max_archive_date = datetime.date.today() - datetime.timedelta(days=2)
+    start_date = (max_archive_date - datetime.timedelta(days=365)).strftime("%Y-%m-%d")
+    end_date = max_archive_date.strftime("%Y-%m-%d")
 
     records = []
     for city, coords in PREDEFINED_CITIES.items():
@@ -735,8 +737,14 @@ else:
 
 st.sidebar.markdown(f"### {t['time_select']}")
 today = datetime.date.today()
-start_date = st.sidebar.date_input(t["start_date"], today - datetime.timedelta(days=3 * 365))
-end_date = st.sidebar.date_input(t["end_date"], today)
+max_archive_date = today - datetime.timedelta(days=2)
+default_start = max_archive_date - datetime.timedelta(days=3 * 365)
+start_date = st.sidebar.date_input(t["start_date"], value=default_start, max_value=max_archive_date)
+end_date = st.sidebar.date_input(t["end_date"], value=max_archive_date, max_value=max_archive_date)
+
+if start_date >= end_date:
+    st.sidebar.error("Start Date must be earlier than End Date.")
+    st.stop()
 
 st.sidebar.markdown(f"### {t['fore_settings']}")
 forecast_horizon = st.sidebar.slider(t["fore_horizon"], min_value=7, max_value=365, value=90)
@@ -769,8 +777,38 @@ with st.spinner(f"Fetching weather data..."):
 # Fetch real-time current conditions & short-term forecast
 realtime_forecast = fetch_realtime_forecast(lat, lon)
 
+# ----------------- DYNAMIC WEATHER DESIGN EFFECTS & ANIMATED CURSOR -----------------
+curr_w = realtime_forecast.get("current", {}) if realtime_forecast else {}
+w_code = curr_w.get("weather_code", 0)
+w_day = curr_w.get("is_day", 1)
+w_temp = curr_w.get("temperature_2m", 20.0)
+
+theme_info = get_weather_theme(w_code, w_day, w_temp)
+apply_weather_effects(
+    weather_code=w_code,
+    is_day=w_day,
+    temp=w_temp,
+    city_name=city_name,
+)
+
+st.sidebar.markdown(
+    f"""
+    <div style="background:rgba(30,41,59,0.7); border:1px solid {theme_info['color']}44; padding:10px 14px; border-radius:10px; margin-top:15px; margin-bottom:10px;">
+        <span style="font-size:11px; text-transform:uppercase; color:#94a3b8; font-weight:600;">Ambient Weather Vibe</span>
+        <div style="font-size:14px; font-weight:700; color:{theme_info['color']}; margin-top:2px;">
+            {theme_info['badge']}
+        </div>
+        <div style="font-size:11px; color:#cbd5e1; margin-top:2px;">
+            Cursor & dynamic visuals adapted for {city_name}
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
 if df_raw is None or df_raw.empty:
     st.error("Could not retrieve weather data. Please check connection and coordinates.")
+    st.info("💡 Note: The Open-Meteo Historical Archive only contains finalized records up to 2 days prior to today. Please select an End Date in the past.")
     st.stop()
 
 # Run cleaning and aggregation pipeline
@@ -797,11 +835,25 @@ top_cols = st.columns([1.5, 1.5, 1.5, 1.5, 2, 1])
 @st.cache_data(ttl=600, show_spinner=False)
 def fetch_top_cities_weather():
     cities = {
-        "Washington": {"lat": 38.8951, "lon": -77.0364, "alerts": 2},
-        "New York": {"lat": 40.7128, "lon": -74.0060, "alerts": 2},
+        "Washington": {"lat": 38.8951, "lon": -77.0364, "alerts": 0},
+        "New York": {"lat": 40.7128, "lon": -74.0060, "alerts": 0},
         "Los Angeles": {"lat": 34.0522, "lon": -118.2437, "alerts": 0},
-        "Chicago": {"lat": 41.8781, "lon": -87.6298, "alerts": 1}
+        "Chicago": {"lat": 41.8781, "lon": -87.6298, "alerts": 0}
     }
+    # Query real active alerts from shared alert_log
+    try:
+        from climatrend.climate.db.database import get_db
+        with get_db() as conn:
+            cursor = conn.cursor()
+            for name in cities:
+                cursor.execute(
+                    "SELECT COUNT(*) FROM alert_log WHERE (title LIKE ? OR message LIKE ?) AND status IN ('active', 'escalated');",
+                    (f"%{name}%", f"%{name}%"),
+                )
+                cities[name]["alerts"] = cursor.fetchone()[0]
+    except Exception:
+        pass
+
     results = {}
     for name, coords in cities.items():
         try:
@@ -855,14 +907,25 @@ st.markdown('</div>', unsafe_allow_html=True)
 col_menu, col_content = st.columns([0.18, 0.82], gap="small")
 
 with col_menu:
-    menu_options = ["Current", "Hourly", "Details", "Maps", "Monthly", "Trends"]
+    menu_options = [
+        "Current", "Hourly", "Details", "Maps", "Monthly", "Trends",
+        "AirQuality", "Disasters", "RegionalAlerts", "Carbon",
+        "ClimateRisk", "Reduction", "Infrastructure",
+    ]
     display_names = {
         "Current": "☀️ Current",
         "Hourly": "🕒 Hourly",
         "Details": "📋 Details",
         "Maps": "🗺️ Maps",
         "Monthly": "📅 Monthly",
-        "Trends": "📈 Trends"
+        "Trends": "📈 Trends",
+        "AirQuality": "🍃 Air Quality",
+        "Disasters": "🚨 Disasters",
+        "RegionalAlerts": "🏛️ Regional Alerts",
+        "Carbon": "👣 Carbon",
+        "ClimateRisk": "⚠️ Climate Risk",
+        "Reduction": "💡 Emission Reduction",
+        "Infrastructure": "🏗️ Infrastructure",
     }
     
     default_idx = menu_options.index(st.session_state["active_tab"])
@@ -1509,5 +1572,69 @@ with col_content:
                     $$\\theta_{\\text{avg}} = \\text{atan2}(\\overline{\\sin(\\theta)}, \\overline{\\cos(\\theta)})$$
                 """
             )
+
+    # ----------------- NAV STATE: AIR QUALITY (FEATURE 2) -----------------
+    elif st.session_state["active_tab"] == "AirQuality":
+        from climatrend.climate.ui.air_quality_view import render_air_quality_view
+        render_air_quality_view(
+            city_name=city_name,
+            lat=lat,
+            lon=lon,
+            temp_unit=temp_unit,
+            translations=t,
+        )
+
+    # ----------------- NAV STATE: DISASTERS (FEATURE 6) -----------------
+    elif st.session_state["active_tab"] == "Disasters":
+        from climatrend.climate.ui.disaster_view import render_disaster_view
+        render_disaster_view(
+            city_name=city_name,
+            lat=lat,
+            lon=lon,
+            translations=t,
+        )
+
+    # ----------------- NAV STATE: REGIONAL ALERTS (FEATURE 7) -----------------
+    elif st.session_state["active_tab"] == "RegionalAlerts":
+        from climatrend.climate.ui.regional_alert_view import render_regional_alert_view
+        render_regional_alert_view(
+            city_name=city_name,
+            lat=lat,
+            lon=lon,
+            temp_unit=temp_unit,
+            translations=t,
+        )
+
+    # ----------------- NAV STATE: CARBON FOOTPRINT (FEATURE 1) -----------------
+    elif st.session_state["active_tab"] == "Carbon":
+        from climatrend.climate.ui.carbon_view import render_carbon_view
+        render_carbon_view(
+            user_id="user_default",
+            translations=t,
+        )
+
+    # ----------------- NAV STATE: CLIMATE RISK (FEATURE 3) -----------------
+    elif st.session_state["active_tab"] == "ClimateRisk":
+        from climatrend.climate.ui.risk_view import render_risk_view
+        render_risk_view(translations=t)
+
+    # ----------------- NAV STATE: EMISSION REDUCTION (FEATURE 4) -----------------
+    elif st.session_state["active_tab"] == "Reduction":
+        from climatrend.climate.ui.reduction_view import render_reduction_view
+        render_reduction_view(translations=t)
+
+    # ----------------- NAV STATE: RESILIENT INFRASTRUCTURE (FEATURE 5) -----------------
+    elif st.session_state["active_tab"] == "Infrastructure":
+        from climatrend.climate.ui.infrastructure_view import render_infrastructure_view
+        render_infrastructure_view(
+            city_name=city_name,
+            lat=lat,
+            lon=lon,
+            user_id="user_default",
+            translations=t,
+        )
+
+
+
 
 

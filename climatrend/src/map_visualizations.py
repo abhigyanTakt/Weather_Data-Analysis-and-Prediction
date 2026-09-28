@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import folium
 from folium.plugins import HeatMap
 from typing import Optional, List, Tuple
+from climatrend.climate.ui.map_helper import get_folium_base_map
 
 logger = logging.getLogger(__name__)
 
@@ -145,7 +146,7 @@ def plot_interactive_folium_heatmap(
     avg_lat = df_clean["latitude"].mean() if not df_clean.empty else 20.0
     avg_lon = df_clean["longitude"].mean() if not df_clean.empty else 0.0
 
-    m = folium.Map(location=[avg_lat, avg_lon], zoom_start=2, tiles="CartoDB positron")
+    m = get_folium_base_map(location=[avg_lat, avg_lon], zoom_start=2, dark_mode=False)
 
     # Prepare data points for HeatMap plugin: [[lat, lon, weight], ...]
     # Normalize weights between 0 and 1 for better rendering

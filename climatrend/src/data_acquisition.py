@@ -6,6 +6,7 @@ data from the Open-Meteo Historical Weather API.
 """
 
 import os
+import datetime
 import logging
 from typing import Tuple, Dict, Any, Optional
 import pandas as pd
@@ -80,6 +81,25 @@ def fetch_historical_weather(
     Returns:
         A pandas DataFrame with hourly weather parameters, or None if failed.
     """
+    # Open-Meteo Archive API only supports finalized data up to 1-2 days before today.
+    # Automatically clamp end_date if it is today or in the future to avoid HTTP 400.
+    max_archive_date = datetime.date.today() - datetime.timedelta(days=2)
+    try:
+        req_end = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
+        if req_end > max_archive_date:
+            logger.warning(
+                f"Requested end_date ({end_date}) is too recent for Open-Meteo Archive API. "
+                f"Clamping to {max_archive_date}."
+            )
+            end_date = max_archive_date.strftime("%Y-%m-%d")
+
+        req_start = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
+        if req_start >= req_end:
+            req_start = max_archive_date - datetime.timedelta(days=365)
+            start_date = req_start.strftime("%Y-%m-%d")
+    except Exception as e:
+        logger.warning(f"Date validation warning: {e}")
+
     # Create cache directory if it doesn't exist
     os.makedirs(cache_dir, exist_ok=True)
 
@@ -122,6 +142,8 @@ def fetch_historical_weather(
 
     try:
         response = requests.get(OPEN_METEO_ARCHIVE_URL, params=params, timeout=20)
+        if response.status_code != 200:
+            logger.error(f"Archive API returned status {response.status_code}: {response.text}")
         response.raise_for_status()
         data = response.json()
 
