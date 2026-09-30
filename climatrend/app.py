@@ -6,9 +6,11 @@ into an interactive, professional-grade dashboard with high-fidelity UI/UX,
 multilingual localizations, and real-time weather reports.
 """
 
+import base64
 import os
 import sys
 import logging
+from pathlib import Path
 import pandas as pd
 import numpy as np
 import datetime
@@ -49,61 +51,11 @@ from climatrend.src.ai_insights import get_ai_insight, API_KEY
 from climatrend.src.forecasting_model import train_test_split_ts
 from climatrend.src.translations import TRANSLATIONS
 from climatrend.src.weather_effects import apply_weather_effects, get_weather_theme
+from climatrend.climate.db.database import init_database as initialize_database_schema
 
 # Configure logger
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-# Start background server for wallpaper video
-import socket
-import threading
-import http.server
-import socketserver
-
-def find_free_port():
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        s.bind(('', 0))
-        return s.getsockname()[1]
-
-def start_background_wallpaper_server():
-    if getattr(sys, "_wallpaper_server_started", False):
-        return sys._wallpaper_server_port
-
-    port = find_free_port()
-    directory = r"D:\Downloads\Wallpaper1\Live"
-    
-    if not os.path.exists(directory):
-        logger.warning(f"Wallpaper directory {directory} does not exist.")
-        sys._wallpaper_server_started = True
-        sys._wallpaper_server_port = None
-        return None
-
-    class SilentHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, directory=directory, **kwargs)
-        
-        def log_message(self, format, *args):
-            # Suppress logs to keep terminal clean
-            pass
-
-    def serve():
-        socketserver.TCPServer.allow_reuse_address = True
-        try:
-            with socketserver.TCPServer(("", port), SilentHTTPRequestHandler) as httpd:
-                sys._wallpaper_server_instance = httpd
-                httpd.serve_forever()
-        except Exception as e:
-            logger.error(f"Failed to run TCPServer on port {port}: {str(e)}")
-
-    thread = threading.Thread(target=serve, daemon=True)
-    thread.start()
-    
-    sys._wallpaper_server_started = True
-    sys._wallpaper_server_port = port
-    logger.info(f"Started background wallpaper server on port {port} serving {directory}")
-    return port
-
-wallpaper_port = start_background_wallpaper_server()
 
 # Streamlit config
 st.set_page_config(
@@ -113,28 +65,20 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Render Background Video wallpaper
-if wallpaper_port:
-    st.markdown(
-        f"""
-        <video autoplay loop muted playsinline onplay="this.playbackRate = 1.75;" style="
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%) scale(0.4);
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            z-index: -100;
-            object-fit: cover;
-            opacity: 0.35;
-        ">
-            <source src="http://localhost:{wallpaper_port}/azure-horizon.3840x2160.mp4" type="video/mp4">
-        </video>
-        """,
-        unsafe_allow_html=True,
-    )
+@st.cache_resource
+def init_database():
+    initialize_database_schema()
+    return True
+
+
+init_database()
+
+if not API_KEY:
+    st.warning("AI climate insights are disabled. Add NVIDIA_API_KEY to Streamlit secrets or the environment to enable them.")
+
+ASSET_DIR = Path(__file__).parent / "assets"
+logo_path = ASSET_DIR / "logo.jpg"
+background_image = base64.b64encode(logo_path.read_bytes()).decode("ascii")
 
 # Custom High-Fidelity UI/UX CSS with Transitions & Animations
 st.markdown(
@@ -352,6 +296,21 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+st.markdown(
+    f"""
+    <style>
+    div[data-testid="stAppViewContainer"] {{
+        background-image: linear-gradient(rgba(12, 21, 36, 0.72), rgba(12, 21, 36, 0.88)),
+            url("data:image/jpeg;base64,{background_image}") !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-attachment: fixed !important;
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # Global Predefined Cities for Map and Quick Loading
 PREDEFINED_CITIES = {
     "London": {"lat": 51.5074, "lon": -0.1278, "country": "United Kingdom"},
@@ -434,14 +393,7 @@ def load_global_map_data():
 
 
 # ----------------- SIDEBAR HEADER & LOGO -----------------
-logo_path = os.path.join(os.path.dirname(__file__), "logo.jpg")
-if os.path.exists(logo_path):
-    st.sidebar.image(logo_path, width='stretch')
-else:
-    st.sidebar.image(
-        "https://images.unsplash.com/photo-1592217643599-22c54463d7e8?auto=format&fit=crop&w=400&q=80",
-        width='stretch',
-    )
+st.sidebar.image(str(logo_path), width="stretch")
 
 # Language Selector
 st.sidebar.markdown("### 🌐 Localization")

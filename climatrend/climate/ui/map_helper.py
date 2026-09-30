@@ -5,9 +5,9 @@ non-watermarked tiles (Esri Dark Canvas, OpenStreetMap, and Esri Satellite).
 Supports CARTO_API_KEY when provided in .env.
 """
 
-import os
 from typing import Any, List, Optional, Tuple
 import folium
+from climatrend.climate.config import CARTO_API_KEY
 
 
 def get_folium_base_map(
@@ -22,7 +22,7 @@ def get_folium_base_map(
     - If dark_mode=False: Uses OpenStreetMap with Dark Canvas and Satellite options.
     - If CARTO_API_KEY is configured: Can optionally use Carto without watermark.
     """
-    carto_key = os.getenv("CARTO_API_KEY", "").strip()
+    carto_key = CARTO_API_KEY.strip()
 
     if dark_mode:
         if carto_key:

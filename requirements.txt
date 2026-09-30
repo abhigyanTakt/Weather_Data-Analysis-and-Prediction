@@ -6,12 +6,13 @@ statsmodels
 pmdarima
 prophet
 scikit-learn
+scipy
 matplotlib
 seaborn
 plotly
 geopandas
+cartopy
 folium
-windrose
 streamlit
 openai
 pydeck
@@ -20,13 +21,12 @@ netCDF4
 python-dotenv
 Pillow
 streamlit-folium
-# Climate & Environmental Intelligence Extensions (Pinned)
-cachetools==7.2.0
-apscheduler==3.11.3
-apprise==2.0.0
-pytest==9.1.1
-pulp==3.0.2
-pymannkendall==1.4.3
-xgboost==3.2.0
-shap==0.51.0
+cachetools
+apscheduler
+apprise
+pytest
+pulp
+pymannkendall
+xgboost
+shap
 

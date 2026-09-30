@@ -8,6 +8,7 @@ data from the Open-Meteo Historical Weather API.
 import os
 import datetime
 import logging
+from pathlib import Path
 from typing import Tuple, Dict, Any, Optional
 import pandas as pd
 import requests
@@ -64,7 +65,7 @@ def fetch_historical_weather(
     lon: float,
     start_date: str,
     end_date: str,
-    cache_dir: str = "climatrend/data/raw",
+    cache_dir: str = str(Path(__file__).resolve().parents[1] / "data" / "raw"),
     city_name: Optional[str] = None,
 ) -> Optional[pd.DataFrame]:
     """

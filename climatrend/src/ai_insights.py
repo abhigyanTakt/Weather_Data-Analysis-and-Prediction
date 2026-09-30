@@ -7,26 +7,19 @@ It incorporates real-time weather reports, short-term 7-day forecasts, and
 localizes responses to English, Japanese, Mandarin Chinese, Spanish, French, or Hindi.
 """
 
-import os
 import logging
 from typing import Dict, Any, Optional
 import pandas as pd
 from openai import OpenAI
-
-# Load .env file if present (for local development)
-try:
-    from dotenv import load_dotenv
-    load_dotenv()
-except ImportError:
-    pass  # python-dotenv not required in production
+from climatrend.climate.config import get_setting
 
 logger = logging.getLogger(__name__)
 
 # API configuration — set NVIDIA_API_KEY in your .env file or environment
-API_KEY = os.getenv("NVIDIA_API_KEY", "")
-BASE_URL = os.getenv("NVIDIA_BASE_URL", "https://integrate.api.nvidia.com/v1")
-MODEL_NAME = os.getenv("NVIDIA_MODEL_NAME", "deepseek-ai/deepseek-v4.1-flash")
-TIMEOUT = float(os.getenv("NVIDIA_TIMEOUT", "20.0"))
+API_KEY = get_setting("NVIDIA_API_KEY")
+BASE_URL = get_setting("NVIDIA_BASE_URL", "https://integrate.api.nvidia.com/v1")
+MODEL_NAME = get_setting("NVIDIA_MODEL_NAME", "deepseek-ai/deepseek-v4.1-flash")
+TIMEOUT = float(get_setting("NVIDIA_TIMEOUT", "20.0"))
 
 # WMO Weather Code Mapping to descriptions
 WMO_CODE_MAP = {
