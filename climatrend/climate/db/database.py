@@ -7,6 +7,7 @@ import json
 import logging
 import sqlite3
 from contextlib import contextmanager
+from datetime import date, timedelta
 from pathlib import Path
 from typing import Generator, Optional, Dict, Any, List
 
@@ -133,7 +134,7 @@ def get_db(path: Optional[Path] = None) -> Generator[sqlite3.Connection, None, N
         conn.close()
 
 
-def init_db(path: Optional[Path] = None) -> None:
+def init_database(path: Optional[Path] = None) -> None:
     """Initializes the database schema and seeds initial regions and alert rules."""
     target_path = path or DB_PATH
     target_path.parent.mkdir(parents=True, exist_ok=True)
@@ -156,6 +157,36 @@ def init_db(path: Optional[Path] = None) -> None:
                     (r["name"], r["lat"], r["lon"], r["country"], r["elevation"]),
                 )
             logger.info("Seeded initial monitored regions.")
+
+        cursor.execute("SELECT COUNT(*) FROM climatology_baselines;")
+        if cursor.fetchone()[0] == 0:
+            cursor.execute(
+                """
+                INSERT INTO climatology_baselines (
+                    region_id, day_of_year, month, metric, mean, std,
+                    p5, p10, p50, p90, p95, p99, sample_years
+                ) VALUES (1, 1, 1, 'temperature_2m_mean', 5.2, 3.4,
+                          -1.0, 1.0, 5.2, 9.5, 10.5, 12.0, 0);
+                """
+            )
+            logger.info("Seeded the demonstration climatology baseline.")
+
+        cursor.execute("SELECT COUNT(*) FROM carbon_activities;")
+        if cursor.fetchone()[0] == 0:
+            today = date.today()
+            cursor.executemany(
+                """
+                INSERT INTO carbon_activities (
+                    user_id, activity_date, category, subcategory,
+                    value, unit, co2e_kg, notes
+                ) VALUES ('user_default', ?, ?, ?, ?, ?, ?, 'Startup demo activity');
+                """,
+                [
+                    ((today - timedelta(days=1)).isoformat(), "transport", "car", 12.0, "km", 2.76),
+                    (today.isoformat(), "energy", "electricity", 8.0, "kWh", 3.2),
+                ],
+            )
+            logger.info("Seeded sample carbon activities.")
 
         # Seed default alert rules if empty
         cursor.execute("SELECT COUNT(*) FROM alert_rules;")
@@ -190,7 +221,10 @@ def init_db(path: Optional[Path] = None) -> None:
     logger.info(f"Database initialized successfully at {target_path}")
 
 
+init_db = init_database
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    init_db()
+    init_database()
     print("ClimaTrend SQLite database initialized and seeded successfully.")
