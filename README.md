@@ -208,25 +208,27 @@ Weather_Data-Analysis-and-Prediction/
 ## 📸 Screenshots or Demo will be at my linkdin post
 
 ### 🌡️ Real-Time Current Weather Conditions
-![Current Weather — London](screenshots/screenshot_current_weather.png)
+![Current Weather](screenshots/screenshot_current_weather.png)
 > Live temperature, humidity, wind speed, pressure & the interactive 3D animated weather model (daytime sun shown above London at 25.9°C).
 
 ---
 
 ### 🌐 Interactive 3D Weather State Space
-![3D Weather State Space — Moscow](screenshots/screenshot_3d_statespace.png)
-> A fully interactive 3D scatter plot visualizing temperature, humidity, wind speed & precipitation together — powered by Plotly.
+<img width="1914" height="799" alt="Screenshot 2026-07-02 200341" src="https://github.com/user-attachments/assets/c2c50e37-94f4-48d2-b6c4-d0fc9ca9a2d3" />
+
+> Interface of the climate web app.
 
 ---
 
 ### 🗺️ Interactive Maps — Temperature Overlay (日本語 UI)
-![Maps Temperature — Tokyo](screenshots/screenshot_maps_temperature.png)
+<img width="1919" height="883" alt="image" src="https://github.com/user-attachments/assets/c89048da-62e4-4e61-936c-24c9c52120f8" />
 > Live Windy.com map centred on Tokyo with the **Temperature** overlay active, demonstrating the full multilingual Japanese interface.
 
 ---
 
 ### ☁️ Interactive Maps — Cloud Cover Overlay (日本語 UI)
-![Maps Clouds — Tokyo](screenshots/screenshot_maps_clouds.png)
+<img width="1913" height="835" alt="Screenshot 2026-07-02 200436" src="https://github.com/user-attachments/assets/19f5f50d-8a56-4bd1-a065-a75f7aa8e26b" />
+
 > Same map view switching to the **Clouds** overlay — showcasing switchable weather layers and the seamless language localisation.
 >[Linkdin Post](https://www.linkedin.com/posts/abhigyan-dubey-5468bb320_nvidia-nature-cliamte-ugcPost-7478460692430344192-uwvy/?utm_source=social_share_send&utm_medium=member_desktop_web&rcm=ACoAAFFKqEYBM1fLYZDqeaJ95_wm3093I2LlkvM)
 
@@ -347,7 +349,10 @@ Made with ❤️ by <a href="https://github.com/abhigyanTakt">Abhigyan</a>
 </div>
 
 
-
-## Log
+### Log
  - 07/11/2026 Changed the models
  - A bit late but deepseek model api is in beta (idk i just working on it)
+ - 02/08/2026 fix bugs and graphs issues
+ - Aug 6,2026 added option like dark mode and light mode
+ - 10/08/2026 changes graphs outlines
+ - upcoming featurs -> in ui/ux , deployment etc
